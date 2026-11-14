@@ -1,0 +1,7 @@
+# 仕様の補足
+
+[OTRP wiki](https://github.com/teamhimeh/simutrans/wiki/OTRP-Home) に書かれていない挙動や、ソースを読んで確かめた細かい仕様を置きます。
+
+wiki に同じ主題のページがあるときは、冒頭でそのページへリンクし、ここには差分だけを書きます。
+
+ページはまだありません。足し方は[書き方](../contributing.md)を見てください。
