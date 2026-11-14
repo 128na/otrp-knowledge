@@ -8,4 +8,4 @@ OTRP 本体をビルド・改修するときの知見を置きます。
 - [MCP Server](https://github.com/teamhimeh/simutrans/wiki/MCP-Server)
 - [ツール定義](https://github.com/teamhimeh/simutrans/wiki/%E3%83%84%E3%83%BC%E3%83%AB%E5%AE%9A%E7%BE%A9)
 
-ページはまだありません。足し方は[書き方](../contributing.md)を見てください。
+ページの足し方は[書き方](../contributing.md)を見てください。

@@ -12,6 +12,7 @@ const sections = [
   { dir: 'spec', text: '仕様の補足' },
   { dir: 'tips', text: 'Tips' },
   { dir: 'dev', text: '開発' },
+  { dir: 'records', text: '記録' },
 ]
 
 // ページの題名は、最初の「# 見出し」から取る。無ければファイル名。

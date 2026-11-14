@@ -12,6 +12,7 @@ OTRP（[teamhimeh/simutrans](https://github.com/teamhimeh/simutrans)）の実装
 | `docs/spec/` | 仕様の補足 |
 | `docs/tips/` | Tips |
 | `docs/dev/` | 開発 |
+| `docs/records/` | 記録（その時点の確認結果・経緯。書いたら変えない） |
 | `docs/wiki-index.md` | wiki のページ一覧 |
 | `docs/contributing.md` | 書き方（ページの足し方・ひな形） |
 | `docs/.vitepress/config.mts` | サイトの設定。目次はフォルダの中身から自動で作る |
