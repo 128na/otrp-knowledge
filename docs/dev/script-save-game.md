@@ -35,7 +35,7 @@
 - **MCP の VM を見分ける。** `script_vm_t::from_mcp` を `mcp_tools.cc` の `tool_run_squirrel` で立て、API 側は `sq_getforeignptr(vm)` で `script_vm_t` を取って見る（スレッドにも同じポインタが入っている）。
 - **ネットワークの判定は `env_t::networkmode` と `env_t::server`。** `networkmode` が真でも `server == 0` ならクライアント。
 - **登録は `STATIC register_function(vm, fn, "save_game", 2, ".s")`。** `if (scenario)` の外に置くと、AI・ツール・MCP の VM にも出る。`world_create_player` などは `if (scenario)` の中にあり、シナリオ専用。
-- **新しい C++ ソースは 3 か所に登録する。** `Makefile`、`cmake/SimutransSourceList.cmake`、`Simutrans-Main.vcxitems`（`ClCompile` と `ClInclude`）。
+- **新しい C++ ソースは 2 か所に登録する。** `Makefile` と `Simutrans-Main.vcxitems`（`ClCompile` と `ClInclude`）。`cmake/SimutransSourceList.cmake` は管理対象外なので足さない（足した PR は、fork 元の contributor から外すよう求められた）。
 
 ## テスト
 
