@@ -1,6 +1,6 @@
 # Squirrel API と MCP サーバー
 
-> この内容は、OTRP の PR とリリースノートの記述から拾ったものです（2026-11-14 時点）。ゲームの動作やソースコードでは確かめていません。仕様は [OTRP wiki](https://github.com/teamhimeh/simutrans/wiki/OTRP-Home) が正です。
+> この内容は、OTRP の PR とリリースノートの記述から拾い、OTRP v63_4 のソースコードと照らし合わせたものです（2026-11-21）。ゲームを動かしての確認はしていません。仕様は [OTRP wiki](https://github.com/teamhimeh/simutrans/wiki/OTRP-Home) が正です。
 
 OTRP で追加された Squirrel API（スクリプトから使える関数・クラス）と、MCP サーバーのツールをまとめる。API の名前・引数は PR・リリースノートの記述のとおりで、wiki の OTRP-Home に載っている分（file クラス、gui の 4 関数、`get_connections` の基本形、`base_waiting_time`、`schedule_entry_x` の座標）は省く。
 
@@ -12,7 +12,7 @@ MCP サーバーは `-mcp-port` で起動し、ポートの既定は 13354。プ
 
 - `run_squirrel` は、渡されたコードを `function __mcp_fn__()` に包み、`ai_base.nut` で作った新規 VM で実行する。呼び出しごとに VM を作って捨てるので、状態は残らない。
 - ファイルは作らず、メモリ上でコンパイルする。
-- 暴走対策として、実行できる命令数に上限（10000）があり、超えるとスクリプトは強制中断される。ゲームはフリーズしない。
+- 暴走対策として、1 回の更新で実行できる命令数に上限（10000）がある。超えるとスクリプトは一旦止まり、続きは次の更新で再開される（強制終了ではない）。ゲームはフリーズしない。
 - 最初の実装では、ツールは `run_squirrel` だけ。`get_time` のような個別のツールは作らず、Squirrel API をそのまま使わせる設計。
 - 動作は、ローカルゲームの進行中・一時停止中、ネットワークゲームのサーバー側・クライアント側で、情報取得と建設コマンドが実行されることを確かめてある。
 
@@ -21,7 +21,7 @@ MCP サーバーは `-mcp-port` で起動し、ポートの既定は 13354。プ
 
 ### capture_screen ツール
 
-`tools/list` は `run_squirrel` と `capture_screen` の 2 つを返す。
+v63_4 の `tools/list` は `run_squirrel`・`capture_screen`・`export_minimap`・`get_tile_info` の 4 つを返す。ここでは `capture_screen` の追加時点の 2 つを表にする。
 
 | ツール | 引数 | 返すもの |
 |---|---|---|
@@ -30,14 +30,21 @@ MCP サーバーは `-mcp-port` で起動し、ポートの既定は 13354。プ
 
 `capture_screen` の PNG 書き出しは、通常のスクリーンショット保存（`simscrNN.png`）と処理を共通にしてある。
 
-**wiki との違い:** wiki の MCP-Server は利用可能なツールを `run_squirrel` のみと書いている。`capture_screen` はリリース v55_9（2026-06-27）で追加された。
+**wiki との違い:** wiki の MCP-Server は利用可能なツールを `run_squirrel` のみと書いている。`capture_screen` はリリース v55_9（2026-06-27）で追加された。ほかの 2 つ（`export_minimap`・`get_tile_info`）も wiki に記載がない。
 
 - 出典: [#622](https://github.com/teamhimeh/simutrans/pull/622)（2026-06-27 マージ）、リリース v55_9
 - 関連する wiki: [MCP-Server](https://github.com/teamhimeh/simutrans/wiki/MCP-Server)（記述が古い）
 
 ### ツールの追加（v60_1_1）
 
-リリース v60_1_1 で「mcp サーバーモードにおいて、使用可能なツールを増やしました」とある。PR の本文にも増えたツールの名前は書かれていないので、ここでは名前を示せない。
+リリース v60_1_1 で「mcp サーバーモードにおいて、使用可能なツールを増やしました」とある。PR の本文にも増えたツールの名前は書かれていない。
+
+v63_4 には、`run_squirrel`・`capture_screen` のほかに次の 2 つがある。このうち v60_1_1 で増えたのがどれかは、コードからは分からない（`export_minimap` は v62_2 の #753 で入ったもの）。
+
+| ツール | 引数 | 内容 |
+|---|---|---|
+| `get_tile_info` | `x`・`y`（必須）、`z`（省略可） | 1 タイルの情報を返す。地面の種類（地面・橋・トンネル・高架）、地面と線路の傾斜（建設できるかの印つき）、置かれている物（線路・建物・信号・車両など）とその所有者。`z` を省くと地表のタイル、`z` を指定するとその高さのタイルを探し、無ければエラーを返す |
+| `export_minimap` | `mapmode`（省略可） | 地図全域の画像をスクリーンショットのフォルダに PNG で保存し、そのパスを返す。`mapmode` は数値のビットマスク、または `MAP_TOWN\|MAP_LINES` のように名前を `\|` でつないだ文字列で、この書き出しだけに使われる（地図ウィンドウの表示は変わらない） |
 
 - 出典: [#711](https://github.com/teamhimeh/simutrans/pull/711)（2026-09-03 マージ）、リリース v60_1_1
 - 関連する wiki: [MCP-Server](https://github.com/teamhimeh/simutrans/wiki/MCP-Server)（記載なし）
@@ -74,7 +81,7 @@ MCP サーバーは `-mcp-port` で起動し、ポートの既定は 13354。プ
 
 ### schedule_entry_x の追加項目
 
-`schedule_entry_x` に次が足された。路線・編成のスケジュールを `append_entry` や `change_schedule` で設定し、`get_schedule` で読み戻せる。
+`schedule_entry_x` に次が足された。`schedule_x` の `entries` に入れて、編成・路線の `change_schedule` で設定でき、`get_schedule` で読み戻せる。`journey_time`・`waiting_time`・`convoy_stopping_time` は読み取り用で、設定のときは使われない。
 
 | 名前 | 内容 | 出典 |
 |---|---|---|
@@ -84,12 +91,12 @@ MCP サーバーは `-mcp-port` で起動し、ポートの既定は 13354。プ
 | `length_coupling_done` | 連結完了判定の長さ | #468 |
 | `max_speed` | その停留所での編成の最大速度の上書き（km/h） | #468 |
 | `balance_speed` | その停留所でのバランス速度の上書き（km/h） | #468 |
-| `journey_time` | 直近 5 回の所要時間（ticks）。前の停留所を出てからこの停留所に着くまで | #472 |
+| `journey_time` | 直近 5 回の所要時間（ticks）。前の停留所に着いてから、この停留所に着くまで（前の停留所の停車時間を含む）。途中に中継点があれば、その中継点を通ってから | #472 |
 | `waiting_time` | 直近 5 回の貨物の平均待機時間（ticks）。停留所に着いてから積み込まれるまでの加重平均 | #472 |
 | `convoy_stopping_time` | 直近 5 回の編成の停車時間（ticks）。到着から出発まで | #472 |
 
 - `journey_time`・`waiting_time`・`convoy_stopping_time` は配列で、index 0 が最新。未記録は 0。
-- これらの統計は**路線のスケジュール**に記録される。値を見るには `cnv.get_schedule()` ではなく `line.get_schedule()` を使う。
+- これらの統計は、編成が路線に属していれば**路線のスケジュール**に記録される（路線に属さない編成は、その編成自身のスケジュールに記録される）。路線の編成の値を見るには `cnv.get_schedule()` ではなく `line.get_schedule()` を使う。
 
 - 出典: [#394](https://github.com/teamhimeh/simutrans/pull/394)（2026-02-18 マージ）、[#468](https://github.com/teamhimeh/simutrans/pull/468)（2026-04-15 マージ）、[#472](https://github.com/teamhimeh/simutrans/pull/472)（2026-04-19 マージ）、リリース v54_0_1（#468・#471・#472）
 - 関連する wiki: [OTRP-Home](https://github.com/teamhimeh/simutrans/wiki/OTRP-Home)（schedule_entry_x は座標の修正のみ。記載なし）
@@ -107,7 +114,7 @@ MCP サーバーは `-mcp-port` で起動し、ポートの既定は 13354。プ
 | `next_line` | このスケジュールが終わったあと編成が移る路線。**読み取り専用** |
 
 - `next_line` を設定するには `set_next_line(line)` を使う。`set_next_line_id()` は削除された。
-- `set_next_line()` は、waytype の一致、エントリ数が 2 以上、停車できる停留所があること、をチェックする。
+- `set_next_line()` は、渡した路線について、waytype がこのスケジュールと一致すること、その路線のスケジュールのエントリ数が 2 以上であること、その路線の最初のエントリに停車できる停留所があること、をチェックする。`null` を渡すと解除になる。
 - `set_next_line()` がスケジュールの末尾に付けるダミーのエントリは、Squirrel 側の `entries` には含まれない。
 - レビューでは、無効な路線を渡すと、それまでの `next_line` が消える副作用が指摘されている。
 
@@ -163,8 +170,11 @@ MCP サーバーは `-mcp-port` で起動し、ポートの既定は 13354。プ
 - `command_x.build_road` の第 6 引数がテーブルになった。形式は次のとおり。
 
 ```js
-{keep_city_roads = false, overtaking_mode = 1, street_flag = 0, height_offset = 0, vehicle_offset = 0}
+{keep_city_roads = false, overtaking_mode = 1, street_flag = 0, height_offset = 0, vehicle_offset = 0, allow_closed_diagonal = true}
 ```
+
+- 上に書いた値はどれも既定値（`overtaking_mode` の 1 は `twoway_mode`）。省いたキーは既定値のまま。
+- 第 6 引数に従来どおり `true` / `false` を渡すこともでき、その場合は `keep_city_roads` の指定になる。
 
 - 出典: [#488](https://github.com/teamhimeh/simutrans/pull/488)（2026-05-04 マージ）、リリース v55_0_3（道路の `overtaking_mode`・`street_flag` の編集）
 - 関連する wiki: [ツール定義](https://github.com/teamhimeh/simutrans/wiki/%E3%83%84%E3%83%BC%E3%83%AB%E5%AE%9A%E7%BE%A9)・[wayによる車両オフセット機能-vehicle-offset](https://github.com/teamhimeh/simutrans/wiki/way%E3%81%AB%E3%82%88%E3%82%8B%E8%BB%8A%E4%B8%A1%E3%82%AA%E3%83%95%E3%82%BB%E3%83%83%E3%83%88%E6%A9%9F%E8%83%BD-vehicle-offset)（スクリプトからの指定は記載なし）
@@ -183,7 +193,7 @@ MCP サーバーは `-mcp-port` で起動し、ポートの既定は 13354。プ
 - `tool_build_groundobj` は、`default_param` を実行前に検証する（`"Cxxname"` 形式、4 文字以上、先頭は `'0'` か `'1'`）。短い不正なパラメータでクラッシュしていたのを直した。
 - デポ建設のエラーメッセージが具体的になった（upstream と同じ）: `"Ship depots must be built on water!"`、`"Depots must be built on flat dead-end way tiles!"`、`"Tile not empty."`、`"Depots cannot be built on runways!"`。
 - `world.generate_goods()` は、出発座標を経路探索に渡すようになった（#671）。それ以前は、Squirrel 経由では `walk_cost_to_halt` が経路選択に反映されなかった。
-- `world.create_player` の `player_nr` は未使用の 2〜14、`player_type` は 1〜4（1 人間、2 貨物 AI、3 旅客 AI、4 スクリプト AI）。使用済み・範囲外の番号や不正な型は `false`。ネットワークゲームでは、作成の反映が遅れる。
+- `world.create_player` の `player_nr` は未使用の 2〜62、`player_type` は 1〜4（1 人間、2 貨物 AI、3 旅客 AI、4 スクリプト AI）。使用済み・範囲外の番号や不正な型は `false`。ネットワークゲームでは、作成の反映が遅れる。
 
 - 出典: [#368](https://github.com/teamhimeh/simutrans/pull/368)（2026-02-11 マージ）、[#374](https://github.com/teamhimeh/simutrans/pull/374)（2026-02-13 マージ）、[#390](https://github.com/teamhimeh/simutrans/pull/390)（2026-02-16 マージ）、[#380](https://github.com/teamhimeh/simutrans/pull/380)（2026-02-14 マージ）、[#618](https://github.com/teamhimeh/simutrans/pull/618)（2026-06-24 マージ）、リリース v52（自動テストの追加として #368・#374・#375・#380・#390・#394 が載る）、v55_9（#618）
 - 関連する wiki: [OTRP-Home](https://github.com/teamhimeh/simutrans/wiki/OTRP-Home)（いずれも記載なし）
@@ -198,9 +208,12 @@ MCP サーバーは `-mcp-port` で起動し、ポートの既定は 13354。プ
 | `settings.get_first_come_first_serve()` / `settings.set_first_come_first_serve(bool)` | `first_come_first_serve` | #621 |
 | `settings.get_time_based_routing_enabled(good_desc_x)` / `settings.set_time_based_routing_enabled(good_desc_x, bool)` | 貨物カテゴリごとの所要時間ベース経路探索 | #621 |
 | `settings.get_allow_elevated_way_over_others_halt()` / `settings.set_allow_elevated_way_over_others_halt(bool)` | `allow_elevated_way_over_others_halt`（他社駅の上に高架線を敷設できるか） | #606 |
-| `transit_by_foot`、`foot_path_weight`、`foot_path_time_ticks`、`walk_cost_to_halt` の getter / setter | 徒歩連絡の設定 | #671 |
+| `settings.get_transit_by_foot()` / `settings.set_transit_by_foot(bool)` | 近くの停留所どうしを歩いて乗り換えられるか | #671 |
+| `settings.get_foot_path_weight()` / `settings.set_foot_path_weight(値)` | 徒歩連絡 1 タイルあたりのルートコスト | #671 |
+| `settings.get_foot_path_time_ticks()` / `settings.set_foot_path_time_ticks(値)` | 徒歩連絡 1 タイルあたりの所要時間（ticks） | #671 |
+| `settings.get_walk_cost_to_halt()` / `settings.set_walk_cost_to_halt(bool)` | 出発地・目的地と停留所の間の歩行コストを経路探索に反映するか | #671 |
 
-- #671 の getter / setter は、PR の本文に 4 項目の名前だけが書かれている。関数名の綴りは本文からは分からない。
+- 徒歩連絡の 3 つ（`transit_by_foot`・`foot_path_weight`・`foot_path_time_ticks`）は、setter で値が変わると停留所の接続が作り直される。
 - 設定の意味は、settings のページ側を見ること。
 
 - 出典: [#437](https://github.com/teamhimeh/simutrans/pull/437)（2026-03-22 マージ）、[#621](https://github.com/teamhimeh/simutrans/pull/621)（2026-06-29 マージ）、[#606](https://github.com/teamhimeh/simutrans/pull/606)（2026-07-11 マージ）、[#671](https://github.com/teamhimeh/simutrans/pull/671)（2026-07-20 マージ）、リリース v55_10（#621）、v57_0_1（#606）、v58_0_2（#671）
@@ -229,7 +242,14 @@ MCP の `run_squirrel` は AI 側の VM で動くので、これらは scenario 
 
 ## 地図全域の画像保存
 
-地図ウィンドウの全域画像を保存する機能は、リリース v62_2 で、ツール（`simple_tool[53]`）に加えて MCP サーバーとスクリプトからも動くようになった。PR の本文は「squirrel、mcp に対応」「シナリオから呼べるように対応」と書くだけで、関数名やツール名は書かれていないので、ここでは示せない。
+地図ウィンドウの全域画像を保存する機能は、リリース v62_2 で、ツール（`simple_tool[53]`）に加えて MCP サーバーとスクリプトからも動くようになった。PR の本文は「squirrel、mcp に対応」「シナリオから呼べるように対応」と書くだけだが、v63_4 のコードでは次のとおり。
+
+| 呼び出し | 内容 |
+|---|---|
+| `gui.export_minimap()` | 地図全域を PNG でスクリーンショットのフォルダに保存し、そのパスを返す。失敗すると空（null）の文字列 |
+| `gui.export_minimap_with_mode(mapmode)` | 地図の表示モードを指定して保存する。`mapmode` は数値のビットマスクの文字列、または `"MAP_TOWN\|MAP_LINES"` のように名前を `\|` でつないだ文字列（`MAP_` は省略でき、大文字小文字は区別しない）。地図ウィンドウの表示は変わらない。不正なモードのときも空の文字列 |
+| MCP の `export_minimap` | 上と同じ保存を MCP から行う（「ツールの追加」の節の表） |
+| `simple_tool[53]` | ツールとして呼ぶ。`default_param` に表示モードを書ける |
 
 - 出典: [#753](https://github.com/teamhimeh/simutrans/pull/753)（2026-10-12 マージ）、リリース v62_2
 - 関連する wiki: [ツール定義](https://github.com/teamhimeh/simutrans/wiki/%E3%83%84%E3%83%BC%E3%83%AB%E5%AE%9A%E7%BE%A9)（ツールの設定は記載あり。スクリプト・MCP からの呼び出しは記載なし）

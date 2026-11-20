@@ -1,6 +1,6 @@
 # 開発の決まり
 
-> この内容は、OTRP の PR とリリースノートの記述から拾ったものです（2026-11-14 時点）。ゲームの動作やソースコードでは確かめていません。仕様は [OTRP wiki](https://github.com/teamhimeh/simutrans/wiki/OTRP-Home) が正です。
+> この内容は、OTRP の PR とリリースノートの記述から拾い、OTRP v63_4 のソースコードと照らし合わせたものです（2026-11-21）。ゲームを動かしての確認はしていません。仕様は [OTRP wiki](https://github.com/teamhimeh/simutrans/wiki/OTRP-Home) が正です。
 
 OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り返し指摘された決まり、セーブデータ形式の変え方、ネットワークゲームで同期を崩さないための決まり、feature flag、自動テスト、CI・ビルド・配布の知見をまとめる。PR のレビューには AI による自動レビューも含まれるため、出どころが自動レビューのものはそう明記する（プロジェクトの正式な規約として文書化されたものではない）。
 
@@ -12,6 +12,7 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 - 「一行ずつ丁寧に確認しないといけない種類の変更」は、混ぜずに 1 項目ずつ別 PR にするよう求められた。出した側は PR を取り下げて分けた（#60、クローズ）。
 - IDE の自動整形による、趣旨と無関係な差分は混ぜない（#245）。ブランチを切り忘れて別の変更が混入した場合は、rebase して force-push し、履歴を整える（#372）。
 - 動いていない機能のコード（#52 の `reverse_base_offsets` 関連）は、別 PR に分けるよう求められた。無関係な `.gitignore` の変更も同様（#53 のレビュー）。
+- コードでは確かめていない。
 - 出典: [#52](https://github.com/teamhimeh/simutrans/pull/52)（2024-10-19 マージ）、[#53](https://github.com/teamhimeh/simutrans/pull/53)（2025-01-04 マージ）、[#60](https://github.com/teamhimeh/simutrans/pull/60)、[#245](https://github.com/teamhimeh/simutrans/pull/245)（2026-01-04 マージ）、[#372](https://github.com/teamhimeh/simutrans/pull/372)（2026-02-18 マージ）、[#636](https://github.com/teamhimeh/simutrans/pull/636)
 - 関連する wiki: [開発者向け:-Feature-Flagの利用について](https://github.com/teamhimeh/simutrans/wiki/%E9%96%8B%E7%99%BA%E8%80%85%E5%90%91%E3%81%91:-Feature-Flag%E3%81%AE%E5%88%A9%E7%94%A8%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)（250 行の目安のみ）
 
@@ -19,6 +20,7 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 
 - マージしてよい版（または必要な版）を書く。セーブデータの形式に関わる変更は、OTRP のバージョンが上がるまでマージできないため。例: 「v51 でマージ」（#266）、「セーブデータの保護のため v51 以降」（#268）、「v63 以降」（#741、#768）。
 - 互換性を明記する例がある（#186: 「セーブデータ互換性: major version up 不要（既存変数の空きビットを使うため）」「NS 互換性: 下位バージョンと互換性なし」。#207: 「セーブデータ互換性: 影響なし」「ネットワーク同期互換性: 影響なし」）。
+- コードでは確かめていない。
 - 出典: [#266](https://github.com/teamhimeh/simutrans/pull/266)（2026-01-31 マージ）、[#268](https://github.com/teamhimeh/simutrans/pull/268)（2026-01-31 マージ）、[#741](https://github.com/teamhimeh/simutrans/pull/741)（2026-11-01 マージ）、[#768](https://github.com/teamhimeh/simutrans/pull/768)（2026-11-01 マージ）、[#186](https://github.com/teamhimeh/simutrans/pull/186)（2025-10-21 マージ）、[#207](https://github.com/teamhimeh/simutrans/pull/207)（2025-11-29 マージ）
 - 関連する wiki: 記載なし
 
@@ -28,6 +30,7 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 - 末尾の改行は消さない。空行を作らない（#506）。UI の文字列に camelCase を使わない（#174）。日本語と英語の意味を合わせる（#174）。既存の `ja.tab` に訳があるか確認する（#278）。
 - 翻訳が多い PR では、`#地形データ出力` のようにセクションを分け、セクション見出しをハイフンで強調し、`#------その他の翻訳------` の前に置くよう求められた（#790）。`simutrans/text/ja.tab` は OTRP の対応範囲外で、`ja.OTRP.tab` に統一する（#790）。
 - `documentation/OTRP_information_en.md` と `documentation/OTRP_v13_information.md` は保守していない。説明は wiki に書く（#174）。
+- コードでは確かめていない。
 - 出典: [#245](https://github.com/teamhimeh/simutrans/pull/245)、[#274](https://github.com/teamhimeh/simutrans/pull/274)（2026-01-11 マージ）、[#280](https://github.com/teamhimeh/simutrans/pull/280)（2026-01-12 マージ）、[#278](https://github.com/teamhimeh/simutrans/pull/278)（2026-01-12 マージ）、[#506](https://github.com/teamhimeh/simutrans/pull/506)（2026-05-20 マージ）、[#174](https://github.com/teamhimeh/simutrans/pull/174)（2025-11-22 マージ）、[#790](https://github.com/teamhimeh/simutrans/pull/790)（2026-11-04 マージ）
 - 関連する wiki: 記載なし
 
@@ -37,6 +40,7 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 - 手順を実施した作者は、確認した項目にチェックを付けるよう求められる。チェックボックスは書き込み権限のある人しか操作できず、権限の無い作者は付けられなかった（#637）。
 - Windows の IME まわりの PR は、Microsoft Japanese IME を使う Windows GDI 版での確認が前提だった（#585）。
 - コードの自動レビュー（Claude、Gemini、Codex、Antigravity と署名されたもの）が、メンテナのアカウントからコメントとして投稿される。指摘が外れることもあり、取捨される。例: 独自コンテナ `vector_tpl` に戻すよう求めた自動レビューに対し、メンテナは「どっちでもいいです」と返した（#506）。
+- コードでは確かめていない。
 - 出典: [#556](https://github.com/teamhimeh/simutrans/pull/556)（2026-06-02 マージ）、[#585](https://github.com/teamhimeh/simutrans/pull/585)（2026-06-11 マージ）、[#637](https://github.com/teamhimeh/simutrans/pull/637)（2026-07-08 マージ）、[#506](https://github.com/teamhimeh/simutrans/pull/506)、リリース v55_6_1
 - 関連する wiki: 記載なし
 
@@ -48,7 +52,7 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 - 本文で「この変更を有効にするには major version を 50 に上げる必要がある」と書いて、版の引き上げを求めた例がある（#249）。2026-11-13 に出された未マージの PR（#810）も、way ごとに 1 バイト足すため `OTRP_VERSION_MAJOR` を 63 から 64 に上げる、と本文に書き、「版の引き上げを自分で行いたければ知らせてほしい」と添えている。
 - セーブデータ構造を変えると `OTRP_VERSION_MAJOR` を上げる必要がある、という認識は PR の作者側にもある。これを避けるために、セーブしない値を `finish_rd()` で復元して済ませた例がある（#680、2026-08-03 マージ）。
 - 古いバージョンで読むと壊れる変更は、バージョンを上げた次のリリースに入れる（#230 は v49、#149・#174 は v47 以降、#741・#768 は v63 以降）。
-- 機能の追加・変更は、次のリリースで minor version を上げるよう求められた例がある（#150）。PR によって「minor version」「major version」と呼び方が揺れており、どの桁を上げるかは本文では確定できない。
+- 機能の追加・変更は、次のリリースで minor version を上げるよう求められた例がある（#150）。PR によって「minor version」「major version」と呼び方が揺れているが、v63_4 のソースでは、セーブデータの構造を変えるときに上げる桁は `OTRP_VERSION_MAJOR` とされている（minor を上げる基準はコードからは分からない）。
 - 出典: [#52](https://github.com/teamhimeh/simutrans/pull/52)、[#249](https://github.com/teamhimeh/simutrans/pull/249)（2026-01-03 マージ）、[#810](https://github.com/teamhimeh/simutrans/pull/810)（未マージ、2026-11-13 時点で OPEN）、[#680](https://github.com/teamhimeh/simutrans/pull/680)、[#230](https://github.com/teamhimeh/simutrans/pull/230)（2025-12-26 マージ）、[#150](https://github.com/teamhimeh/simutrans/pull/150)（2025-09-07 マージ）、[#174](https://github.com/teamhimeh/simutrans/pull/174)
 - 関連する wiki: [OTRP-Home](https://github.com/teamhimeh/simutrans/wiki/OTRP-Home) の「セーブデータの互換性」は一般論のみ（バージョンの運用は記載なし）
 
@@ -56,7 +60,7 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 
 - 読み書きの分岐は `file->get_OTRP_version()` の比較（`<N`、`>=N`）で書く。ファイルのバージョン以外の条件を入れない。
   - 実例: ネットワークモードで保存したデータが通常モードで読めなかった。`time_multiplier` と `fix_game_speed` の読み書きが、セーブファイルの属性ではなく実行時の `env_t::networkmode` に依存して、5 バイトずれたため（#378、2026-02-14 マージ）。マージされた最終コードは本文から確認できなかった。
-- 例: 振分信号の `choose_sign_flag`（uint8）は OTRP バージョン 46 以上で保存し、22 以上 46 未満は `guide_signal`（bool）を読んで `advance_to_end` を true にする（#168、2025-09-14 マージ）。
+- 例: 振分信号の `choose_sign_flag` は OTRP バージョン 46 以上で保存する（46〜53 は uint8、54 以上は 16 ビット）。22 以上 46 未満は `guide_signal`（bool）を読んで `advance_to_end` を true にする（#168、2025-09-14 マージ）。
 - 追加したデータは、`save` 側にも `load` 側にも同じバージョンの条件を付ける（#508 の自動レビュー）。バージョンの判定は、`file` が使える所では `file->get_OTRP_version() < N` のパターンに合わせる（#461 の自動レビュー）。
 - 旧バージョンの形式で保存できる機能（v54 までさかのぼれる、#535。バージョンの選択は `loadsave_frame_t` のコンボボックスにする案がレビューで出た）を使うときの注意。
   - 今後の機能追加で `get_OTRP_version()==0` と `>0` の分岐をなるべく作らない。マージしたバージョンによってセーブデータの長さが変わりうるため（#535）。
@@ -84,7 +88,7 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 - `static` 変数に頼るツールは、スクリプトやネットワークゲームで使えない。ツールの対象（都市の座標など）は `default_param` で渡し、`init` で受け取る。不正な値なら `init` が false を返して拒否する（#53 のレビュー）。
 - `is_work_network_safe()` を true にしただけでは、サーバーでは動いてもクライアントの操作で切断・非同期になった。最終的に `default_param` だけで対象を扱う形に直して動いた（#53）。
 - `env_t` に置けるのは、セーブデータに依存しない永続値だけ。マップごとに違う値を置くと、別のマップで復元されて誤動作する（#53）。
-- `tool_build_way_t` は `rdwr_custom_data` をやめ、`default_param` に `"way_name,overtaking_mode,street_flag,height_offset,vehicle_offset"`（例 `"asphalt_road,1,0,0,0"`）の形で渡す形に変わった。ネットワークパケットの形式が変わるため、異なる版の間では接続できない（#486）。
+- `tool_build_way_t` は `rdwr_custom_data` をやめ、`default_param` に `"way_name,overtaking_mode,street_flag,height_offset,vehicle_offset,allow_closed_diagonal"`（例 `"asphalt_road,1,0,0,0,0"`）の形で渡す形に変わった。ネットワークパケットの形式が変わるため、異なる版の間では接続できない（#486）。
 - 状態を変える処理は `init` ではなく `do_work` で行う。`init` で上書きしていた `default_electric` が、サーバーとクライアントで異なる架線を引く原因になった（#258）。
 - GUI 専用のツール（ダイアログを開くだけのもの）は `is_init_network_safe()` を true にする。これを override しないと、クライアントのショートカットから呼んだツールが `NWC_TOOL` としてサーバーに送られ、サーバー側でもウィンドウが開いた（#583）。必要なら `init()` で `can_use_gui()` も確認する。
 - ドラッグ中に Ctrl を切り替えるツールは、ドラッグ開始時の状態でモードを固定する。固定しないと、ネットワークモードで矩形の処理がサーバーに送られずクライアントだけで実行され、同期がずれる（#662 の自動レビュー）。
@@ -120,6 +124,7 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 - ユーザーが変えられる文字列（停留所名・翻訳済みのアドオン名）を `printf` の書式文字列に直接渡さない。`%` を含むと未定義動作になる（#612、#616 の自動レビュー）。
 - `sprintf` ではなく `snprintf` を使う（#535）。コンボボックスの項目は `translator::translate` を通す（#535 の自動レビュー）。
 - デバッグ用の一時的なテストは `all_tests.nut` に入れない。不具合の検出に使えるテストは残す（#558）。
+- コードでは確かめていない。
 - 出典: [#52](https://github.com/teamhimeh/simutrans/pull/52)、[#59](https://github.com/teamhimeh/simutrans/pull/59)（2025-01-13 マージ）、[#62](https://github.com/teamhimeh/simutrans/pull/62)（2025-02-07 マージ）、[#65](https://github.com/teamhimeh/simutrans/pull/65)（2025-02-15 マージ）、[#67](https://github.com/teamhimeh/simutrans/pull/67)（2025-02-27 マージ）、[#70](https://github.com/teamhimeh/simutrans/pull/70)（2025-02-25 マージ）、[#75](https://github.com/teamhimeh/simutrans/pull/75)（2025-02-27 マージ）、[#79](https://github.com/teamhimeh/simutrans/pull/79)（2025-04-01 マージ）、[#80](https://github.com/teamhimeh/simutrans/pull/80)（2025-04-12 マージ）、[#106](https://github.com/teamhimeh/simutrans/pull/106)（2025-07-10 マージ）、[#114](https://github.com/teamhimeh/simutrans/pull/114)（2025-07-27 マージ）、[#107](https://github.com/teamhimeh/simutrans/pull/107)（2025-07-14 マージ）、[#174](https://github.com/teamhimeh/simutrans/pull/174)、[#278](https://github.com/teamhimeh/simutrans/pull/278)、[#309](https://github.com/teamhimeh/simutrans/pull/309)（2026-01-31 マージ）、[#358](https://github.com/teamhimeh/simutrans/pull/358)（2026-02-22 マージ）、[#506](https://github.com/teamhimeh/simutrans/pull/506)、[#535](https://github.com/teamhimeh/simutrans/pull/535)、[#558](https://github.com/teamhimeh/simutrans/pull/558)（2026-06-05 マージ）、[#612](https://github.com/teamhimeh/simutrans/pull/612)（2026-06-30 マージ）、[#616](https://github.com/teamhimeh/simutrans/pull/616)（2026-06-27 マージ）
 - 関連する wiki: 記載なし（`documentation/coding_styles.txt` が基準）
 
@@ -175,6 +180,7 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 - 都市の成長に左右される位置への建物の配置は非決定的。後片付けの `remover.work` の結果は Fatal のアサーションにしない（`tool_remover` は対象タイルに何も無いと空文字を返す、#484 のレビュー）。
 - テストの時間を縮めるには `debug.set_game_speed(5)` が使える（#380）。
 - 設定を切り替えるテストには、Squirrel の `settings` の API が要る。経路キャッシュは既定が OFF なので、ON にする API を足してテストした（#587）。
+- コードでは確かめていない。
 - 出典: [#421](https://github.com/teamhimeh/simutrans/pull/421)（2026-03-29 マージ）、[#584](https://github.com/teamhimeh/simutrans/pull/584)（2026-07-17 マージ）、[#393](https://github.com/teamhimeh/simutrans/pull/393)（2026-02-17 マージ）、[#484](https://github.com/teamhimeh/simutrans/pull/484)（2026-05-04 マージ）、[#380](https://github.com/teamhimeh/simutrans/pull/380)（2026-02-14 マージ）、[#587](https://github.com/teamhimeh/simutrans/pull/587)
 - 関連する wiki: 記載なし
 
@@ -188,12 +194,12 @@ OTRP 本体（C++）に PR を出す人向けに、PR のレビューで繰り�
 
 ### GitHub Actions のワークフロー
 
-- 自動テストのワークフローは `.github/workflows/otrp-automated-tests.yml`。Pull Request の作成時と手動実行で動き、Ubuntu latest で実行する。失敗時はログをアーティファクトとしてアップロードし、成否は GitHub Checks API で判定する（#367）。build / list-tests / test の 3 ジョブに分かれ、テストをバッチにまとめて並列ジョブ数を減らす。バッチの大きさは、10 個ずつ（35 ジョブから 4 ジョブ、#373）から 20 個ずつ（#383）に変わった。
-- Windows 64bit ビルドのワークフローにも `pull_request` のトリガーが足された（#348）。macOS のビルドも PR で実行される（#633）。
+- 自動テストのワークフローは `.github/workflows/otrp-automated-tests.yml`。Pull Request の作成時と手動実行で動き、Ubuntu 24.04 で実行する。失敗時はログをアーティファクトとしてアップロードし、成否は GitHub Checks API で判定する（#367）。build / list-tests / test の 3 ジョブに分かれ、テストをバッチにまとめて並列ジョブ数を減らす。バッチの大きさは、10 個ずつ（35 ジョブから 4 ジョブ、#373）から 20 個ずつ（#383）に変わった。
+- Windows 64bit ビルドのワークフローにも `pull_request` のトリガーが足された（#348）。macOS のビルドは、v63_4 では PR では動かず、`v*` タグの push と手動実行だけで動く。
 - ビルド成果物の名前（#207）:
-  - タグ付きコミット（例 v48）: `sim-mac-OTRPv48`、`sim-linux-OTRPv48`、`sim-WinGDI-OTRPv48.exe`
-  - 手動実行（`workflow_dispatch`）: `sim-mac-OTRP_<ブランチ名>`（macOS のみ）
-  - PR: 従来どおり `sim-linux-OTRP`（Ubuntu のみ）
+  - タグ付きコミット（例 v48）: `sim-mac-OTRPv48.app`、`sim-linux-OTRPv48`、`sim-WinGDI64-OTRPv48.exe`（Windows には SDL3 版の `sim-WinSDL3-OTRPv48.exe` もある）
+  - 手動実行（`workflow_dispatch`）: `sim-mac-OTRP_<ブランチ名>.app`（macOS のみ）
+  - PR: Ubuntu と Windows のワークフローが動く。macOS は動かない
   - 対象は `otrp-macos.yml`、`otrp-ubuntu.yml`、`otrp-windows-64.yml`。
 - SDL3 のバックエンドが追加された（`BACKEND=sdl3`。SDL3 を使える Linux・macOS では SDL3 を優先して選ぶ。Windows は従来の GDI を維持して SDL3 のビルドを追加。#716）。Ubuntu 向けの SDL3 の自動ビルドは、失敗が続いたため一旦削除された（#727、2026-09-07 マージ）。Linux の配布バイナリは Ubuntu 24.04 と SDL2 で作る（#716 の本文）。リリース v60_1_1 で「SDL3 ビルドに対応、mac 版のみ配布開始」。
 - 出典: [#367](https://github.com/teamhimeh/simutrans/pull/367)、[#373](https://github.com/teamhimeh/simutrans/pull/373)、[#383](https://github.com/teamhimeh/simutrans/pull/383)、[#348](https://github.com/teamhimeh/simutrans/pull/348)（2026-02-05 マージ）、[#633](https://github.com/teamhimeh/simutrans/pull/633)（2026-06-30 マージ）、[#207](https://github.com/teamhimeh/simutrans/pull/207)、[#716](https://github.com/teamhimeh/simutrans/pull/716)、[#727](https://github.com/teamhimeh/simutrans/pull/727)、リリース v60_1_1
