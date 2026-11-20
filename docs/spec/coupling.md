@@ -333,7 +333,7 @@ wiki の「編成テンプレート機能について」に、使い方・フォ
   - 全車両が電車のテンプレートは、非電化の車庫では出さない。
   - 既存の編成がある場合は、その waytype（track か tram）のものだけを出す。編成がなく鉄道車庫の場合は、「路面電車を表示」が OFF なら track だけ、ON なら tram だけを出す。
   - 「全てを表示」と「連結の不完全な編成を許可」がどちらも OFF のとき、既存の編成に足す場合は、「追加」ならテンプレートの先頭が既存編成の末尾に、「先頭へ」ならテンプレートの末尾が既存編成の先頭に連結できるものだけを出す。
-- 出典: [#528](https://github.com/teamhimeh/simutrans/pull/528)（2026-05-22 マージ）、[#531](https://github.com/teamhimeh/simutrans/pull/531)（2026-05-27）、[#543](https://github.com/teamhimeh/simutrans/pull/543)（2026-05-28）、[#498](https://github.com/teamhimeh/simutrans/pull/498)、リリース v55_3
+- 出典: [#528](https://github.com/teamhimeh/simutrans/pull/528)（2026-05-22 マージ）、[#531](https://github.com/teamhimeh/simutrans/pull/531)（2026-05-27）、[#543](https://github.com/teamhimeh/simutrans/pull/543)（2026-05-28）、[#498](https://github.com/teamhimeh/simutrans/pull/498)（初期の仕様案。未マージのままクローズ）、リリース v55_3
 - 関連する wiki: [[v55.3‐]-編成テンプレート機能について](https://github.com/teamhimeh/simutrans/wiki/%5Bv55.3%E2%80%90%5D-%E7%B7%A8%E6%88%90%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E6%A9%9F%E8%83%BD%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)（色バー・ステータス欄・タブの非表示・端部の互換フィルターは記載なし）
 
 ## 編成の抑止
