@@ -10,7 +10,7 @@
 - 成功すると `null`、失敗すると理由の文字列を返す。名前が文字列でないときだけ例外になる。
 - 名前は**検証するだけで書き換えない**。不正なら何も書かない。
 - 専用の起動オプションは無い。シナリオ・AI・ツールのスクリプトと MCP の `run_squirrel` から呼べる。
-- ネットワークゲームでは、サーバー上のスクリプトだけが保存できる。クライアントと、サーバー上の MCP は拒否される。
+- ネットワークゲームでも制限は無い。サーバー・クライアントのどちらでも、画面からの保存と同じ `karte_t::save` を通る（クライアントの保存はローカルの写しになる）。
 - 既存の読み取り専用ファイルは上書きせず、エラーを返す。
 
 ## 名前の検証
@@ -32,8 +32,7 @@
 - **Squirrel の文字列は NUL を含められる。** `const char*` で受けると `ok\0evil` が `ok` に切り詰められ、検証を通ってしまう。`sq_getstringandsize` で長さごと受け取り、全体を検証する。
 - **`karte_t::save` は成否を `bool` で返す。** 元は `void` で、置き換え（`dr_rename`）の失敗を無視して成功ダイアログを出していた。
 - **Windows では読み取り専用の相手に rename できない。** `MoveFileEx` が失敗し、一時ファイル `.sv_` が残ったまま「保存しました」と出ていた。POSIX の `dr_rename` は `remove` してから `rename` するので、読み取り専用でも黙って置き換わる。OS で動作が分かれるため、`karte_t::save` の先頭で「既存で、追記で開けないファイルは書き込む前に拒否」に統一した（`dr_fopen(filename, "ab")` で判定）。置き換えに失敗したときと、書き込みに失敗したときは `.sv_` を消す。この修正は画面からの保存にも効く。
-- **MCP の VM を見分ける。** `script_vm_t::from_mcp` を `mcp_tools.cc` の `tool_run_squirrel` で立て、API 側は `sq_getforeignptr(vm)` で `script_vm_t` を取って見る（スレッドにも同じポインタが入っている）。
-- **ネットワークの判定は `env_t::networkmode` と `env_t::server`。** `networkmode` が真でも `server == 0` ならクライアント。
+- **スクリプトだけ制限しない。** 画面からの保存（`gui/loadsave_frame.cc`）も、クライアントでも同じ `karte_t::save` を呼び、ネットワークかどうかの判定が無い。最初の版は「サーバー上のスクリプトだけ可、クライアントと MCP は不可」にしていたが、レビューの指摘で外した（`script_vm_t::from_mcp` も戻した。2026-11-21）。
 - **登録は `STATIC register_function(vm, fn, "save_game", 2, ".s")`。** `if (scenario)` の外に置くと、AI・ツール・MCP の VM にも出る。`world_create_player` などは `if (scenario)` の中にあり、シナリオ専用。
 - **新しい C++ ソースは 2 か所に登録する。** `Makefile` と `Simutrans-Main.vcxitems`（`ClCompile` と `ClInclude`）。`cmake/SimutransSourceList.cmake` は管理対象外なので足さない（足した PR は、fork 元の contributor から外すよう求められた）。
 
