@@ -14,7 +14,7 @@
 
 | 判定 | 件数 | 版 |
 |---|---|---|
-| 取りこぼし | 3 | r9576、r9587、r9618 |
+| 取りこぼし | 3 | r9587、r9618 と、ネットワーク越しに届きうるもの 1 件（この記録に載せない） |
 | 反証が出て外した | 1 | r10144 |
 | 別の形で直っている | 7 | r9541、r9627、r9707、r9820、r10058、r10119、r10203 |
 | 当てはまらない | 12 | r9379、r9396、r9397、r9462、r9465、r9481、r9494、r9526、r9608、r9721、r9776、r9930 |
@@ -28,7 +28,6 @@
 |---|---|---|---|---|---|---|
 | r9618 | `d705c0ec3` | med | 反証なし | `dataobj/loadsave.cc:608-609`（`loadsave_t::flush_buffer`） | FIX: Assertion failure when running out of disk space during saving | ディスクが満杯で書き込みが足りないと `assert(sz == pos)` で落ちる。`Makefile` は `DEBUG` を定義しないときだけ `-DNDEBUG` を足すので、`DEBUG = 0` の配布用の設定でも assert は効く。直すのは `flush_buffer` だけで足りる（`close()` には容量不足の文言がすでにある）。 |
 | r9587 | `2b225197b` | low | 反証なし | `simworld.cc:2737`（`karte_t::can_lower_to`）、`simtool.cc` の `tool_set_slope_work` | FIX: disallow lowering tunnels below world_minimum_height | 地形やトンネルを下げるときに最低高度（`world_minimum_height`）を見ない。ただし地下水位より 3〜4 段下で先に止まるので、地下水位が -9 より低いような極端な設定でないと届かない。 |
-| r9576 | `d8f257538` | low | 反証なし | — | FIX: Fatal error when querying gameinfo of servers running ancient versions | ネットワーク越しに届きうるので、場所と中身はこの記録に書かない。 |
 
 
 ### 反証が出て外したもの
@@ -40,4 +39,4 @@
 ## 4. 確かめた場所
 
 - 本家 `master` の `eb7dafc31`（r12117）、OTRP `OTRP-KUTAv6` の `d4d61158e`。2026-11-23。
-- 3 件は [#20](https://github.com/128na/simutrans/issues/20) の一覧に足した。r9576 の場所と中身は、公開しない手元の記録に置いた。
+- r9587・r9618 は [#20](https://github.com/128na/simutrans/issues/20) の一覧に足した。ネットワーク越しに届きうる 1 件は、公開しない手元の記録に置いた（2026-11-23 に、版と題名の行も外した）。
