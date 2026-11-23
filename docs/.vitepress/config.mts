@@ -11,7 +11,6 @@ const wiki = 'https://github.com/teamhimeh/simutrans/wiki/OTRP-Home'
 const sections = [
   { dir: 'spec', text: '仕様の補足' },
   { dir: 'tips', text: 'Tips' },
-  { dir: 'dev', text: '開発' },
   { dir: 'records', text: '記録' },
 ]
 

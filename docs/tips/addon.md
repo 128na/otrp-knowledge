@@ -119,7 +119,6 @@ v63_4 には入っていない（2026-11-14 時点で OPEN、2026-11-13 作成�
 - switch 画像を持つアドオンだけに選択肢が出る案。選択肢は `Auto`（既定）、`Standard`、2 つの分岐状態（T 字: `Branch north/east/south/west`、十字: `Crossover A/B`）。拡張（ex）画像があれば `Y-junction (<dir>)` と `Double crossover A/B` も出る。
 - v63_4 の本体は way の画像リストが 26 枚を超えると拡張（ex）の分岐器画像として読むが、同梱の makeobj の書き出しは `nsew2`（26 枚目）までのキーしか持たず、ex 用のキーを書けない。ex 用のキーはこの PR にも含まれない。
 - 選択はセーブデータに way ごとに 1 バイト足して残す（OTRP バージョン 64 以降の形式）。PR のブランチはバージョンを 63 のままにしてあり、マージ後に上げる運用。
-- 本体を改修した側の知見は[分岐（switch）の絵の固定](/dev/switch-image-override)にある。
 
 - 出典: [#810](https://github.com/teamhimeh/simutrans/pull/810)（未マージ、2026-11-14 時点）
 - 関連する wiki: 記載なし

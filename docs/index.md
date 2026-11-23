@@ -22,9 +22,6 @@ features:
   - title: Tips
     details: 遊ぶとき・アドオンを作るときの小さな知見。
     link: /tips/
-  - title: 開発
-    details: OTRP 本体をビルド・改修するときの知見。
-    link: /dev/
 ---
 
 ## このサイトの位置づけ
