@@ -97,19 +97,3 @@
 ページ: [アドオン制作](/tips/addon)
 
 - **1 マスの斜めタイル停留所のホーム長と、古い pak の緩急坂（v50_5）**: wiki「斜めタイル停留所・勾配タイル停留所について」は、停車する端のタイルが斜めなら有効長はその半分（5.65625）と説明するが、v33_2 時点の暫定仕様と断っている。1 マスだけの停留所は #313（2026-01-27 マージ）で斜めタイル 1 マス分に変わった。
-
-## Squirrel API と MCP サーバー
-
-ページ: [Squirrel API と MCP サーバー](/dev/scripting-mcp)
-
-- **capture_screen ツール**: wiki の MCP-Server は利用可能なツールを `run_squirrel` のみと書いている。`capture_screen` はリリース v55_9（2026-06-27）で追加された。ほかの 2 つ（`export_minimap`・`get_tile_info`）も wiki に記載がない。
-- **halt_x.get_connections() の追加項目**: wiki の OTRP-Home は戻り値を `halt`・`weight`・`line` の 3 つとして書いている。`raw_weight`・`is_foot_path`・無効時の `null` は記載がない（#671 は 2026-07-20、#521 は 2026-05-20 のマージ）。
-- **schedule_x の追加項目**: wiki の OTRP-Home は schedule_x について `base_waiting_time` しか書いていない。上の項目は v54_0_1 で追加された。
-- **gui クラスの追加（画面の操作と取得）**: wiki の OTRP-Home の gui クラスの節は `jump`・`close_all_windows`・`take_screenshot`・`set_zoom` までで、上の 5 つは記載がない（すべて 2026-06-28 マージ、リリース v55_10）。
-
-## 開発の決まり
-
-ページ: [開発の決まり](/dev/rules)
-
-- **`config.default` への書き方**: wiki の同じページの中で、本文は `CFLAGS += -DNEW_FEATURE=1`、末尾の表は「`config.default` に `FEATURE_X = 1` を追加」と書き、食い違っている（wiki の原文に日付は無い）。#506 のメンテナの発言（2026-05-20）は本文の書き方（`CFLAGS +=`）と合う。「ガイドラインを更新する」という予告が wiki に反映されたかは、確かめていない。
-- **macOS ビルドの変遷**: OTRP-Home の mac の節は、配布バイナリは Apple の認証を受けていないので `xattr` の操作が要る、と書く。v63_3（2026-11-12）で公証に対応したが、公証済みのビルドでこの操作が要らなくなるかは、PR とリリースノートから読み取れなかった。
